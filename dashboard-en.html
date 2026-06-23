@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trader AI — Public Audit</title>
+    <link rel="icon" href="data:,">
+    <style>
+        :root {
+            --bg: #060b14;
+            --bg-card: #0a1020;
+            --border: #1a2540;
+            --cyan: #06b6d4;
+            --blue: #3b82f6;
+            --green: #10b981;
+            --red: #ef4444;
+            --text: #e2e8f0;
+            --text-dim: #94a3b8;
+            --text-muted: #64748b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 48px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: 1px;
+        }
+
+        .logo svg {
+            color: var(--cyan);
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 50px;
+            font-size: 13px;
+            color: var(--green);
+        }
+
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: var(--text-dim);
+            font-size: 15px;
+            margin-bottom: 48px;
+        }
+
+        /* Cards */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .card-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .card-value {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--cyan);
+        }
+
+        .card-value.green { color: var(--green); }
+        .card-value.yellow { color: #f59e0b; }
+
+        .card-sub {
+            font-size: 12px;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+
+        /* Table */
+        .table-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 48px;
+        }
+
+        .table-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th {
+            text-align: right;
+            padding: 14px 16px;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th:first-child { text-align: left; }
+
+        td {
+            text-align: right;
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            font-weight: 500;
+        }
+
+        td:first-child { text-align: left; font-weight: 600; }
+
+        .up { color: var(--green); }
+        .down { color: var(--red); }
+        .neutral { color: #f59e0b; }
+
+        .highlight-row {
+            background: rgba(6, 182, 212, 0.03);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 24px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer p {
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        .footer a {
+            color: var(--cyan);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .last-update {
+            color: var(--text-dim);
+            font-size: 13px;
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: var(--text-muted);
+        }
+
+        .loading-dots {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .loading-dots span {
+            width: 8px;
+            height: 8px;
+            background: var(--cyan);
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out;
+        }
+
+        .loading-dots span:nth-child(1) { animation-delay: 0s; }
+        .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .card-value {
+                font-size: 28px;
+            }
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <a href="https://torch-ai-official.github.io/trader-ai/" class="logo">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                </svg>
+                <span>TRADER AI</span>
+            </a>
+            <div class="status">
+                <span class="pulse"></span>
+                Real-time data
+            </div>
+        </div>
+
+        <h1>Public Audit Panel</h1>
+        <p class="subtitle">Metrics verified directly against the Binance API. Raw data available for download.</p>
+
+        <!-- Metrics Cards -->
+        <div class="cards-grid" id="metrics-cards">
+            <div class="loading">
+                <div class="loading-dots">
+                    <span></span><span></span><span></span>
+                </div>
+                <p>Loading metrics...</p>
+            </div>
+        </div>
+
+        <!-- Performance Table -->
+        <div class="table-section">
+            <div class="table-header">Performance by Coin and Horizon</div>
+            <div class="table-wrapper" id="performance-table">
+                <div class="loading">
+                    <div class="loading-dots">
+                        <span></span><span></span><span></span>
+                    </div>
+                    <p>Loading performance data...</p>
+                </div>
+            </div>
+        </div>
+
+        <p class="last-update" id="update-time">Last update: --</p>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>
+                Data verified via Binance API. 
+                <a href="dados.json" target="_blank">Download raw data (JSON)</a>
+            </p>
+            <p style="margin-top: 4px;">Trader AI &copy; 2026 — Made in Bauru, Brazil</p>
+        </div>
+    </div>
+
+    <script>
+        // Load data from JSON
+        fetch('dados.json?t=' + new Date().getTime())
+            .then(response => response.json())
+            .then(data => {
+                renderMetrics(data);
+                renderPerformance(data);
+                document.getElementById('update-time').innerText = 
+                    'Last update: ' + (data.ultima_atualizacao || '--');
+            })
+            .catch(err => {
+                console.error('Error loading data:', err);
+                document.getElementById('metrics-cards').innerHTML = 
+                    '<div class="loading"><p>⚠️ Data unavailable at the moment. The system may be updating.</p></div>';
+            });
+
+        function renderMetrics(data) {
+            const grid = document.getElementById('metrics-cards');
+            
+            const acuraciaGeral = data.acuracia_geral || data.acuracia || 0;
+            const profitFactor = data.profit_factor || 0;
+            const totalTrades = data.total_trades || 0;
+            const melhoresHorizontes = data.melhores_horizontes || 0;
+
+            grid.innerHTML = `
+                <div class="card">
+                    <div class="card-label">Global Accuracy</div>
+                    <div class="card-value ${acuraciaGeral >= 52 ? 'green' : 'yellow'}">${acuraciaGeral}%</div>
+                    <div class="card-sub">Average across all horizons</div>
+                </div>
+                <div class="card">
+                    <div class="card-label">Profit Factor</div>
+                    <div class="card-value ${profitFactor >= 1.2 ? 'green' : 'yellow'}">${profitFactor}</div>
+                    <div class="card-sub">Gross Profit / Loss</div>
+                </div>
+                <div class="card">
+                    <div class="card-label">Verified Trades</div>
+                    <div class="card-value">${Number(totalTrades).toLocaleString()}</div>
+                    <div class="card-sub">Accumulated</div>
+                </div>
+                <div class="card">
+                    <div class="card-label">Active Horizons</div>
+                    <div class="card-value">${melhoresHorizontes}</div>
+                    <div class="card-sub">With accuracy > 50%</div>
+                </div>
+            `;
+        }
+
+        function renderPerformance(data) {
+            const tableDiv = document.getElementById('performance-table');
+            
+            if (!data.performance || data.performance.length === 0) {
+                tableDiv.innerHTML = '<div class="loading"><p>📊 No performance data available yet.</p></div>';
+                return;
+            }
+
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Coin</th>
+                            <th>5s</th>
+                            <th>15s</th>
+                            <th>30s</th>
+                            <th>1min</th>
+                            <th>5min</th>
+                            <th>15min</th>
+                            <th>30min</th>
+                            <th>1h</th>
+                            <th>Trades</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            data.performance.forEach((moeda, idx) => {
+                const rowClass = idx === 0 ? 'highlight-row' : '';
+                html += `<tr class="${rowClass}">
+                    <td><strong>${moeda.symbol}</strong></td>
+                    ${moeda.acuracia_5s !== undefined ? `<td class="${getColor(moeda.acuracia_5s)}">${moeda.acuracia_5s}%</td>` : '<td>—</td>'}
+                    ${moeda.acuracia_15s !== undefined ? `<td class="${getColor(moeda.acuracia_15s)}">${moeda.acuracia_15s}%</td>` : '<td>—</td>'}
+                    ${moeda.acuracia_30s !== undefined ? `<td class="${getColor(moeda.acuracia_30s)}">${moeda.acuracia_30s}%</td>` : '<td>—</td>'}
+                    ${moeda.acuracia_60s !== undefined ? `<td class="${getColor(moeda.acuracia_60s)}">${moeda.acuracia_60s}%</td>` : '<td>—</td>'}
+                    ${moeda.acuracia_300s !== undefined ? `<td class="${getColor(moeda.acuracia_300s)}">${moeda.acuracia_300s}%</td>` : '<td>—</td>'}
+                    ${moeda.acuracia_900s !== undefined ? `<td class="${getColor(moeda.acuracia_900s)}">${moeda.acuracia_900s}%</td>` : '<td>—</td>'}
+                    ${moeda.acuracia_1800s !== undefined ? `<td class="${getColor(moeda.acuracia_1800s)}">${moeda.acuracia_1800s}%</td>` : '<td>—</td>'}
+                    ${moeda.acuracia_3600s !== undefined ? `<td class="${getColor(moeda.acuracia_3600s)}">${moeda.acuracia_3600s}%</td>` : '<td>—</td>'}
+                    <td>${Number(moeda.total_trades || 0).toLocaleString()}</td>
+                </tr>`;
+            });
+
+            html += '</tbody></table>';
+            tableDiv.innerHTML = html;
+        }
+
+        function getColor(valor) {
+            if (valor >= 55) return 'up';
+            if (valor >= 48) return 'neutral';
+            return 'down';
+        }
+    </script>
+</body>
+</html>
