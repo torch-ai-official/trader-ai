@@ -138,7 +138,7 @@
             margin-top: 4px;
         }
 
-        /* Table */
+        /* Tabela */
         .table-section {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -245,6 +245,39 @@
             animation: bounce 1.4s infinite ease-in-out;
         }
 
+        .filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-dim);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--cyan);
+            color: #fff;
+            background: rgba(6,182,212,0.1);
+        }
+
+        .filter-btn.active {
+            background: rgba(6,182,212,0.2);
+            border-color: var(--cyan);
+            color: var(--cyan);
+            font-weight: 600;
+        }
+
         .loading-dots span:nth-child(1) { animation-delay: 0s; }
         .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
         .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
@@ -254,7 +287,7 @@
             40% { transform: scale(1); }
         }
 
-        /* Responsive */
+        /* Responsivo */
         @media (max-width: 768px) {
             .cards-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -284,10 +317,10 @@
             </div>
         </div>
 
-        <h1>Public Audit Panel</h1>
-        <p class="subtitle">Metrics verified directly against the Binance API. Raw data available for download.</p>
+        <h1>Public Audit Dashboard</h1>
+        <p class="subtitle">Metrics verified directly via the Binance API. Raw data available for download.</p>
 
-        <!-- Metrics Cards -->
+        <!-- Cards de Métricas -->
         <div class="cards-grid" id="metrics-cards">
             <div class="loading">
                 <div class="loading-dots">
@@ -297,9 +330,18 @@
             </div>
         </div>
 
-        <!-- Performance Table -->
+        <!-- Add before the table -->
+        <div class="filter-bar" style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+            <span style="font-size:13px;color:#94a3b8;">Show last:</span>
+            <button onclick="filtrarTrades(100)" class="filter-btn">100 trades</button>
+            <button onclick="filtrarTrades(500)" class="filter-btn">500 trades</button>
+            <button onclick="filtrarTrades(1000)" class="filter-btn">1,000 trades</button>
+            <button onclick="filtrarTrades(0)" class="filter-btn active">All</button>
+        </div>
+
+        <!-- Tabela de Performance -->
         <div class="table-section">
-            <div class="table-header">Performance by Coin and Horizon</div>
+            <div class="table-header">Performance by Symbol and Horizon</div>
             <div class="table-wrapper" id="performance-table">
                 <div class="loading">
                     <div class="loading-dots">
@@ -315,7 +357,7 @@
         <!-- Footer -->
         <div class="footer">
             <p>
-                Data verified via Binance API. 
+                Data verified via the Binance API. 
                 <a href="dados.json" target="_blank">Download raw data (JSON)</a>
             </p>
             <p style="margin-top: 4px;">Trader AI &copy; 2026 — Made in Bauru, Brazil</p>
@@ -323,24 +365,55 @@
     </div>
 
     <script>
-        // Load data from JSON
-        fetch('dados.json?t=' + new Date().getTime())
-            .then(response => response.json())
-            .then(data => {
-                renderMetrics(data);
-                renderPerformance(data);
-                document.getElementById('update-time').innerText = 
-                    'Last update: ' + (data.ultima_atualizacao || '--');
+        let dadosAcumulados = null;
+        let cacheJanelas = {};   // {100: dados, 500: dados, 1000: dados}
+
+        // Load accumulated data on startup
+        fetch('dados.json?t=' + Date.now())
+            .then(r => r.json())
+            .then(acumulado => {
+                dadosAcumulados = acumulado;
+                renderMetrics(acumulado);
+                renderPerformance(acumulado, 0);
+                document.getElementById('update-time').innerText =
+                    'Last update: ' + (acumulado.ultima_atualizacao || '--');
             })
-            .catch(err => {
-                console.error('Error loading data:', err);
-                document.getElementById('metrics-cards').innerHTML = 
-                    '<div class="loading"><p>⚠️ Data unavailable at the moment. The system may be updating.</p></div>';
-            });
+            .catch(err => console.error('Error loading data:', err));
+
+        function filtrarTrades(n) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (n === 0) {
+                renderPerformance(dadosAcumulados, 0);
+                return;
+            }
+
+            // If already cached, use directly
+            if (cacheJanelas[n]) {
+                renderPerformance(cacheJanelas[n], n);
+                return;
+            }
+
+            // Fetch the file for the specific window
+            document.getElementById('performance-table').innerHTML =
+                '<div class="loading"><div class="loading-dots"><span></span><span></span><span></span></div><p>Loading last ' + n + ' trades...</p></div>';
+
+            fetch(`dados_${n}.json?t=` + Date.now())
+                .then(r => r.json())
+                .then(dados => {
+                    cacheJanelas[n] = dados;
+                    renderPerformance(dados, n);
+                })
+                .catch(() => {
+                    // Fallback: if the file does not exist yet, notify the user
+                    document.getElementById('performance-table').innerHTML =
+                        '<div class="loading"><p>⌛ Windowed data not available yet — please wait for the next update cycle.</p></div>';
+                });
+        }
 
         function renderMetrics(data) {
             const grid = document.getElementById('metrics-cards');
-            
             const acuraciaGeral = data.acuracia_geral || data.acuracia || 0;
             const profitFactor = data.profit_factor || 0;
             const totalTrades = data.total_trades || 0;
@@ -370,8 +443,15 @@
             `;
         }
 
-        function renderPerformance(data) {
+        function renderPerformance(data, filtroN) {
             const tableDiv = document.getElementById('performance-table');
+            const tableHeader = document.querySelector('.table-header');
+            
+            if (filtroN > 0) {
+                tableHeader.innerHTML = `Performance <span style="font-size:11px;color:var(--cyan);">(last ${filtroN} trades)</span>`;
+            } else {
+                tableHeader.innerHTML = 'Performance by Symbol and Horizon';
+            }
             
             if (!data.performance || data.performance.length === 0) {
                 tableDiv.innerHTML = '<div class="loading"><p>📊 No performance data available yet.</p></div>';
@@ -382,7 +462,7 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Coin</th>
+                            <th>Symbol</th>
                             <th>5s</th>
                             <th>15s</th>
                             <th>30s</th>

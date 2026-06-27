@@ -245,6 +245,39 @@
             animation: bounce 1.4s infinite ease-in-out;
         }
 
+        .filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-dim);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--cyan);
+            color: #fff;
+            background: rgba(6,182,212,0.1);
+        }
+
+        .filter-btn.active {
+            background: rgba(6,182,212,0.2);
+            border-color: var(--cyan);
+            color: var(--cyan);
+            font-weight: 600;
+        }
+
         .loading-dots span:nth-child(1) { animation-delay: 0s; }
         .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
         .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
@@ -297,6 +330,15 @@
             </div>
         </div>
 
+        <!-- Adicione ANTES da tabela -->
+        <div class="filter-bar" style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+            <span style="font-size:13px;color:#94a3b8;">Mostrar últimos:</span>
+            <button onclick="filtrarTrades(100)" class="filter-btn">100 trades</button>
+            <button onclick="filtrarTrades(500)" class="filter-btn">500 trades</button>
+            <button onclick="filtrarTrades(1000)" class="filter-btn">1.000 trades</button>
+            <button onclick="filtrarTrades(0)" class="filter-btn active">Todos</button>
+        </div>
+
         <!-- Tabela de Performance -->
         <div class="table-section">
             <div class="table-header">Performance por Moeda e Horizonte</div>
@@ -323,24 +365,55 @@
     </div>
 
     <script>
-        // Carrega dados do JSON
-        fetch('dados.json?t=' + new Date().getTime())
-            .then(response => response.json())
-            .then(data => {
-                renderMetrics(data);
-                renderPerformance(data);
-                document.getElementById('update-time').innerText = 
-                    'Última atualização: ' + (data.ultima_atualizacao || '--');
+        let dadosAcumulados = null;
+        let cacheJanelas = {};   // {100: dados, 500: dados, 1000: dados}
+
+        // Carrega acumulado na inicialização
+        fetch('dados.json?t=' + Date.now())
+            .then(r => r.json())
+            .then(acumulado => {
+                dadosAcumulados = acumulado;
+                renderMetrics(acumulado);
+                renderPerformance(acumulado, 0);
+                document.getElementById('update-time').innerText =
+                    'Última atualização: ' + (acumulado.ultima_atualizacao || '--');
             })
-            .catch(err => {
-                console.error('Erro ao carregar dados:', err);
-                document.getElementById('metrics-cards').innerHTML = 
-                    '<div class="loading"><p>⚠️ Dados indisponíveis no momento. O sistema pode estar em atualização.</p></div>';
-            });
+            .catch(err => console.error('Erro ao carregar dados:', err));
+
+        function filtrarTrades(n) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (n === 0) {
+                renderPerformance(dadosAcumulados, 0);
+                return;
+            }
+
+            // Se já está em cache, usa direto
+            if (cacheJanelas[n]) {
+                renderPerformance(cacheJanelas[n], n);
+                return;
+            }
+
+            // Busca o arquivo da janela específica
+            document.getElementById('performance-table').innerHTML =
+                '<div class="loading"><div class="loading-dots"><span></span><span></span><span></span></div><p>Carregando últimos ' + n + ' trades...</p></div>';
+
+            fetch(`dados_${n}.json?t=` + Date.now())
+                .then(r => r.json())
+                .then(dados => {
+                    cacheJanelas[n] = dados;
+                    renderPerformance(dados, n);
+                })
+                .catch(() => {
+                    // Fallback: se o arquivo não existir ainda, avisa o usuário
+                    document.getElementById('performance-table').innerHTML =
+                        '<div class="loading"><p>⌛ Dados por janela ainda não disponíveis — aguarde o próximo ciclo de atualização.</p></div>';
+                });
+        }
 
         function renderMetrics(data) {
             const grid = document.getElementById('metrics-cards');
-            
             const acuraciaGeral = data.acuracia_geral || data.acuracia || 0;
             const profitFactor = data.profit_factor || 0;
             const totalTrades = data.total_trades || 0;
@@ -370,8 +443,15 @@
             `;
         }
 
-        function renderPerformance(data) {
+        function renderPerformance(data, filtroN) {
             const tableDiv = document.getElementById('performance-table');
+            const tableHeader = document.querySelector('.table-header');
+            
+            if (filtroN > 0) {
+                tableHeader.innerHTML = `Performance <span style="font-size:11px;color:var(--cyan);">(últimos ${filtroN} trades)</span>`;
+            } else {
+                tableHeader.innerHTML = 'Performance por Moeda e Horizonte';
+            }
             
             if (!data.performance || data.performance.length === 0) {
                 tableDiv.innerHTML = '<div class="loading"><p>📊 Nenhum dado de performance disponível ainda.</p></div>';

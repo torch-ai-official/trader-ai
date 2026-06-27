@@ -452,7 +452,7 @@ body {
 
 .features {
     padding: 80px 0;
-    background: rgba(255,255,255,0.01);
+    
 }
 
 .features-grid {
@@ -641,7 +641,7 @@ body {
 
 .faq {
     padding: 80px 0;
-    background: rgba(255,255,255,0.01);
+
 }
 
 .faq-grid {
@@ -835,3 +835,21 @@ html, body {
     height: 1px;
     background: rgba(255,255,255,0.1);
 }
+
+/* Corrige o fundo da seção Como Funciona */
+.how-section {
+    padding: 5rem 0;
+    background: #060b14;  /* ⭐ Mesmo fundo do body */
+}
+
+.how-step {
+    background: #0a1020;  /* ⭐ Mesmo dos cards */
+    border: 1px solid #1a2540;
+}
+
+/* Caixa de transparência */
+.how-transparency {
+    background: #0a1020;
+    border: 1px solid #1a2540;
+}
+

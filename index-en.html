@@ -3,12 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trader AI — Crypto Predictions with Artificial Intelligence</title>
-    <meta name="description" content="Trader AI — Crypto prediction system with proprietary AI. 10 time horizons. Real accuracy verified on Binance. Professional dashboard.">
+    <title>Trader AI — Cryptocurrency Forecasts with Artificial Intelligence</title>
+    <meta name="description" content="Trader AI — Proprietary crypto forecasting system with AI. 10 time horizons. Real accuracy verified on Binance. Professional dashboard.">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="data:,">
+
+    <!-- Terms and Privacy Modal -->
+    <style>
+        /* ── Modal ── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.75);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-box {
+            background: #0f172a;
+            border: 1px solid #1e293b;
+            border-radius: 12px;
+            max-width: 680px;
+            width: 100%;
+            max-height: 80vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid #1e293b;
+        }
+        .modal-header h3 { margin: 0; font-size: 1.1rem; color: #f1f5f9; }
+        .modal-close {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 1.5rem;
+            line-height: 1;
+            padding: 0;
+        }
+        .modal-close:hover { color: #f1f5f9; }
+        .modal-body {
+            padding: 1.5rem;
+            overflow-y: auto;
+            color: #94a3b8;
+            font-size: .93rem;
+            line-height: 1.7;
+        }
+        .modal-body h4 { color: #e2e8f0; margin-top: 1.5rem; margin-bottom: .4rem; font-size: 1rem; }
+        .modal-body h4:first-child { margin-top: 0; }
+        .modal-body p { margin: 0 0 .75rem; }
+        .modal-body ul { margin: 0 0 .75rem 1.25rem; }
+
+        /* ── Garantia badge ── */
+        .guarantee-badge {
+            display: flex;
+            align-items: flex-start;
+            gap: .85rem;
+            background: rgba(16,185,129,.08);
+            border: 1px solid rgba(16,185,129,.25);
+            border-radius: 10px;
+            padding: 1rem 1.1rem;
+            margin-top: 1rem;
+        }
+        .guarantee-badge svg { flex-shrink: 0; margin-top: 2px; }
+        .guarantee-badge strong { display: block; color: #10b981; font-size: .95rem; margin-bottom: .2rem; }
+        .guarantee-badge p { margin: 0; color: #94a3b8; font-size: .88rem; line-height: 1.5; }
+
+        /* ── "How it works" section ── */
+        .how-section { padding: 5rem 0; background: #080f1a; }
+        .how-section h2 { text-align: center; font-size: 2rem; margin-bottom: .5rem; color: #f1f5f9; }
+        .how-section .section-sub { text-align: center; color: #64748b; margin-bottom: 3rem; }
+        .how-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; }
+        .how-step {
+            background: #0d1829;
+            border: 1px solid #1e293b;
+            border-radius: 12px;
+            padding: 1.5rem;
+            position: relative;
+        }
+        .how-step-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background: rgba(6,182,212,.15);
+            color: #06b6d4;
+            font-weight: 700;
+            font-size: .9rem;
+            margin-bottom: .85rem;
+        }
+        .how-step h4 { color: #e2e8f0; font-size: 1rem; margin: 0 0 .4rem; }
+        .how-step p { color: #64748b; font-size: .88rem; margin: 0; line-height: 1.6; }
+
+        /* ── Footer legal ── */
+        .footer-legal {
+            margin-top: .75rem;
+            font-size: .8rem;
+            color: #475569;
+        }
+        .footer-legal a { color: #64748b; text-decoration: underline; cursor: pointer; }
+        .footer-legal a:hover { color: #94a3b8; }
+    </style>
 </head>
 <body>
+
+<!-- ══ MODAIS ══════════════════════════════════════════════════════════════ -->
+
+<!-- Terms of Use -->
+<div class="modal-overlay" id="modal-terms">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3>Terms of Use</h3>
+            <button class="modal-close" onclick="closeModal('modal-terms')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Last updated: June 2026.</p>
+
+            <h4>1. Acceptance</h4>
+            <p>By subscribing to or using Trader AI, you fully agree to these Terms. If you do not agree, do not use the service.</p>
+
+            <h4>2. Nature of the service</h4>
+            <p>Trader AI is a forecasting system based on artificial intelligence that analyzes historical cryptocurrency data and issues price direction estimates. <strong>It is not a financial advisory, investment management, or brokerage service.</strong> No forecast constitutes a buy or sell recommendation.</p>
+
+            <h4>3. Risks</h4>
+            <p>Cryptocurrency markets are volatile and unpredictable. Past results do not guarantee future results. The user is solely responsible for trading decisions and any financial losses.</p>
+
+            <h4>4. Accuracy</h4>
+            <p>The published accuracy metrics refer to binary forecasts (up or down) verified against real Binance prices. Accuracy above 50% indicates predictive capability, but it does not eliminate the risk of loss.</p>
+
+            <h4>5. Subscription and payment</h4>
+            <ul>
+                <li>The monthly plan is charged via PIX for R$ 47.00 per 30-day cycle.</li>
+                <li>Access is activated after manual payment confirmation via WhatsApp.</li>
+                <li>Cancellation can be requested at any time without penalty.</li>
+            </ul>
+
+            <h4>6. Refund guarantee</h4>
+            <p>We offer a full refund within 7 calendar days after payment, with no need for justification. Requests must be made via WhatsApp or email.</p>
+
+            <h4>7. Intellectual property</h4>
+            <p>All code, models, data, and content of Trader AI are the exclusive property of its developers. Reproduction, resale, or reverse engineering is prohibited without prior written authorization.</p>
+
+            <h4>8. Limitation of liability</h4>
+            <p>Trader AI is not responsible for direct, indirect, or consequential losses arising from the use of forecasts. Maximum liability is limited to the amount paid in the last 30 days.</p>
+
+            <h4>9. Changes</h4>
+            <p>These terms may be updated at any time. Continued use of the service after changes are published constitutes acceptance of the updates.</p>
+
+            <h4>10. Jurisdiction</h4>
+            <p>The jurisdiction of Bauru/SP is elected to resolve any disputes.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Privacy Policy -->
+<div class="modal-overlay" id="modal-privacy">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3>Privacy Policy</h3>
+            <button class="modal-close" onclick="closeModal('modal-privacy')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Last updated: June 2026.</p>
+
+            <h4>1. Data collected</h4>
+            <p>We collect only the data strictly necessary to provide the service:</p>
+            <ul>
+                <li>Name and WhatsApp number (to activate and support the subscription).</li>
+                <li>Payment proof sent voluntarily.</li>
+                <li>Dashboard usage data (anonymous logs to improve the system).</li>
+            </ul>
+
+            <h4>2. Use of data</h4>
+            <p>The data is used exclusively to activate access, send signals in the VIP group, provide support, and improve the AI model. We do not sell, rent, or share personal data with third parties.</p>
+
+            <h4>3. Storage</h4>
+            <p>The data is stored on encrypted servers. Proofs sent via WhatsApp are deleted after payment confirmation.</p>
+
+            <h4>4. Your rights (LGPD)</h4>
+            <p>Under Law 13.709/2018, you may request at any time: access, correction, portability, or deletion of your data. Just contact us via WhatsApp.</p>
+
+            <h4>5. Cookies</h4>
+            <p>The site uses only essential technical cookies for operation. We do not use tracking or advertising cookies.</p>
+
+            <h4>6. Contact</h4>
+            <p>Privacy questions: <a href="https://wa.me/14991840826" target="_blank">WhatsApp (14) 99184-0826</a>.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ══ PAGE ══════════════════════════════════════════════════════════════ -->
+
     <!-- Navbar -->
     <nav class="navbar">
         <div class="container nav-content">
@@ -17,6 +213,7 @@
                 <span>TRADER AI</span>
             </a>
             <div class="nav-links">
+                <a href="#how-it-works">How it works</a>
                 <a href="#results">Results</a>
                 <a href="#plans">Plans</a>
                 <a href="#faq">FAQ</a>
@@ -35,29 +232,29 @@
                         23,000+ trades verified on Binance
                     </div>
                     <h1>
-                        Crypto Predictions with
-                        <span class="gradient-text">Proprietary Artificial Intelligence</span>
+                        Crypto Forecasts with
+                        <span class="gradient-text">Artificial Intelligence</span>
+                        Proprietary
                     </h1>
                     <p class="hero-desc">
-                        Neural network with 6 million parameters trained across 10 time horizons.
-                        Real accuracy verified trade by trade. No fake backtests.
+                        A neural network trained exclusively on cryptocurrency data predicts price direction across 10 time horizons — from 5-second scalping to 1-day swing trading. Each forecast is verified live against the real Binance price and recorded publicly.
                     </p>
                     
                     <!-- Metrics -->
                     <div class="hero-metrics">
                         <div class="hero-metric">
-                            <span class="hero-metric-value">61.9<span class="unit">%</span></span>
-                            <span class="hero-metric-label">ETH Accuracy<br>15 minutes</span>
+                            <span class="hero-metric-value">68.5<span class="unit">%</span></span>
+                            <span class="hero-metric-label">BTC Accuracy<br>30 minutes</span>
                         </div>
                         <div class="hero-metric-divider"></div>
                         <div class="hero-metric">
                             <span class="hero-metric-value">10</span>
-                            <span class="hero-metric-label">Prediction<br>Horizons</span>
+                            <span class="hero-metric-label">Forecast<br>Horizons</span>
                         </div>
                         <div class="hero-metric-divider"></div>
                         <div class="hero-metric">
                             <span class="hero-metric-value">6M</span>
-                            <span class="hero-metric-label">Network<br>Parameters</span>
+                            <span class="hero-metric-label">Parameters<br>in the Network</span>
                         </div>
                     </div>
 
@@ -67,9 +264,9 @@
                             Get Started Now
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                         </a>
-                        <span class="hero-price">$9/month</span>
+                        <span class="hero-price">R$ 47/month</span>
                     </div>
-                    <p class="hero-guarantee">First 10 subscribers: lifetime price guaranteed</p>
+                    <p class="hero-guarantee">First 10 subscribers: lifetime price guaranteed · 7-day refund</p>
                 </div>
 
                 <!-- Dashboard Preview -->
@@ -87,7 +284,7 @@
                                 <span class="preview-value up">$65,482.00</span>
                             </div>
                             <div class="preview-row">
-                                <span>15min Prediction</span>
+                                <span>15min Forecast</span>
                                 <span class="preview-value up">+2.34%</span>
                             </div>
                             <div class="preview-row">
@@ -95,7 +292,7 @@
                                 <span class="preview-value">61.9%</span>
                             </div>
                             <div class="preview-row">
-                                <span>Regime</span>
+                                <span>Mode</span>
                                 <span class="preview-badge">trend_up</span>
                             </div>
                             <div class="preview-chart">
@@ -123,78 +320,113 @@
                 </div>
                 <div class="trust-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                    <span>Binance data (world's largest exchange)</span>
+                    <span>Binance data (the largest exchange in the world)</span>
                 </div>
                 <div class="trust-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                    <span>10 horizons: 5s to 1 day</span>
+                    <span>7-day refund guarantee</span>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Best Accuracies Already Registered -->
-        <section class="results" id="resultados">
-            <div class="container">
-                <h2>Best Accuracies Already Registered</h2>
-                <p class="section-sub">Verified historical records. Real data from Binance.</p>
-                
-                <div class="results-table-wrapper">
-                    <table class="results-table">
-                        <thead>
-                            <tr>
-                                <th>Currency</th>
-                                <th>Horizon</th>
-                                <th>Accuracy</th>
-                                <th>Trades</th>
-                                <th>Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="highlight-row">
-                                <td><strong>BTC</strong></td>
-                                <td>30min</td>
-                                <td class="up">68.5%</td>
-                                <td>1.577</td>
-                                <td>19/06/2026</td>
-                            </tr>
-                            <tr>
-                                <td><strong>ETH</strong></td>
-                                <td>5min</td>
-                                <td class="up">66.9%</td>
-                                <td>887</td>
-                                <td>08/06/2026</td>
-                            </tr>
-                            <tr>
-                                <td><strong>BNB</strong></td>
-                                <td>30min</td>
-                                <td class="up">64.6%</td>
-                                <td>1.577</td>
-                                <td>19/06/2026</td>
-                            </tr>
-                            <tr>
-                                <td><strong>SOL</strong></td>
-                                <td>5min</td>
-                                <td class="up">56.1%</td>
-                                <td>123</td>
-                                <td>22/06/2026</td>
-                            </tr>
-                            <tr>
-                                <td><strong>BTC</strong></td>
-                                <td>15min</td>
-                                <td class="up">56.3%</td>
-                                <td>13.366</td>
-                                <td>08/06/2026</td>
-                            </tr>
-                        </tbody>
-                    </table>
+    <!-- ══ HOW IT WORKS (NEW SECTION) ══════════════════════════════════════ -->
+    <section class="how-section" id="how-it-works">
+        <div class="container">
+            <h2>What Trader AI is — and how it works</h2>
+            <p class="section-sub">In 4 steps, from the signal to public verification.</p>
+
+            <div class="how-steps">
+                <div class="how-step">
+                    <div class="how-step-num">1</div>
+                    <h4>The AI reads the market in real time</h4>
+                    <p>With each new candle, our neural network with 6 million parameters processes price, volume, volatility, and technical indicators for BTC, ETH, BNB, SOL, and more.</p>
                 </div>
-                <p class="results-note">
-                    Accuracy updated in real-time at 
-                    <a href="dashboard-en.html" style="color:#06b6d4;">Public Audit Panel</a>
-                </p>
+                <div class="how-step">
+                    <div class="how-step-num">2</div>
+                    <h4>It generates a timestamped forecast</h4>
+                    <p>The model decides: will the price go up or down in the next interval? That forecast is recorded immediately with date, time, and confidence level — before the result happens.</p>
+                </div>
+                <div class="how-step">
+                    <div class="how-step-num">3</div>
+                    <h4>You receive the signal on Telegram</h4>
+                    <p>When confidence is high, the signal arrives in the VIP group: asset, direction (buy or sell), time horizon, and estimated target price. 1–2 signals per day, no spam.</p>
+                </div>
+                <div class="how-step">
+                    <div class="how-step-num">4</div>
+                    <h4>Accuracy is verified publicly</h4>
+                    <p>When the horizon closes, we compare the forecast with the real Binance price and update the public data. Nothing is deleted. You can see the full history in the audit dashboard.</p>
+                </div>
             </div>
-        </section>
+
+            <div style="margin-top:2rem; padding: 1.25rem 1.5rem; background: #0d1829; border: 1px solid #1e293b; border-radius: 12px; color: #64748b; font-size: .9rem; line-height: 1.7;">
+                <strong style="color:#e2e8f0;">⚠️ Transparency:</strong> Trader AI predicts price direction — it does not guarantee profit. Accuracy of 60–68% means the AI is correct more often than not, but losses are still possible. Always use risk management and trade only what you can afford to lose.
+            </div>
+        </div>
+    </section>
+
+    <!-- Best Accuracies Ever Recorded -->
+    <section class="results" id="results">
+        <div class="container">
+            <h2>Best Accuracies Ever Recorded</h2>
+            <p class="section-sub">Verified historical records. Real Binance data.</p>
+            
+            <div class="results-table-wrapper">
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Asset</th>
+                            <th>Horizon</th>
+                            <th>Accuracy</th>
+                            <th>Trades</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="highlight-row">
+                            <td><strong>BTC</strong></td>
+                            <td>30min</td>
+                            <td class="up">68.5%</td>
+                            <td>1,577</td>
+                            <td>06/19/2026</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ETH</strong></td>
+                            <td>5min</td>
+                            <td class="up">66.9%</td>
+                            <td>887</td>
+                            <td>06/08/2026</td>
+                        </tr>
+                        <tr>
+                            <td><strong>BNB</strong></td>
+                            <td>30min</td>
+                            <td class="up">64.6%</td>
+                            <td>1,577</td>
+                            <td>06/19/2026</td>
+                        </tr>
+                        <tr>
+                            <td><strong>SOL</strong></td>
+                            <td>5min</td>
+                            <td class="up">56.1%</td>
+                            <td>123</td>
+                            <td>06/22/2026</td>
+                        </tr>
+                        <tr>
+                            <td><strong>BTC</strong></td>
+                            <td>15min</td>
+                            <td class="up">56.3%</td>
+                            <td>13,366</td>
+                            <td>06/08/2026</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="results-note">
+                Accuracy updated in real time in the 
+                <a href="dashboard.html" style="color:#06b6d4;">Public Audit Dashboard</a>
+            </p>
+        </div>
+    </section>
 
     <!-- Features -->
     <section class="features">
@@ -206,7 +438,7 @@
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="1.5"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
                     </div>
                     <h3>Professional Dashboard</h3>
-                    <p>View real-time predictions, candles, technical indicators, and accuracy by horizon in a complete panel.</p>
+                    <p>View forecasts in real time, candles, technical indicators, and accuracy by horizon in a complete panel.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
@@ -220,35 +452,35 @@
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="1.5"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
                     </div>
                     <h3>Risk Management</h3>
-                    <p>Position calculator, stop loss, take profit, scenario simulator, and integrated protection limits.</p>
+                    <p>Built-in position calculator, stop loss, take profit, scenario simulator, and protection limits.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
                     </div>
                     <h3>Complete History</h3>
-                    <p>Every trade recorded, verified, and displayed with real accuracy per coin and horizon. Export your data.</p>
+                    <p>Every trade is logged, verified, and displayed with real accuracy by asset and horizon. Export your data.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
                     </div>
-                    <h3>VIP Group Signals</h3>
-                    <p>Receive the best signals daily on Telegram. Coin, direction, horizon, confidence, and target price.</p>
+                    <h3>Signals in the VIP Group</h3>
+                    <p>Receive the best signals daily on Telegram. Asset, direction, horizon, confidence, and target price.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     </div>
                     <h3>Verified Accuracy</h3>
-                    <p>No backtests. Each prediction is compared against the real Binance price after the horizon. Public data.</p>
+                    <p>No backtests. Each forecast is compared with the real Binance price after the horizon. Public data.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     </div>
                     <h3>Public Audit</h3>
-                    <p>All data is public. Access our <a href="dashboard-en.html" style="color:#06b6d4;">audit panel</a> and see every recorded trade.</p>
+                    <p>All data is public. Access our <a href="dashboard.html" style="color:#06b6d4;">audit dashboard</a> and see every registered trade.</p>
                 </div>
             </div>
         </div>
@@ -257,28 +489,38 @@
     <!-- Plans -->
     <section class="pricing" id="plans">
         <div class="container">
-            <h2>One Plan. Simple. Straightforward.</h2>
+            <h2>One plan. Simple. Straightforward.</h2>
             
             <div class="pricing-card" id="pay">
                 <div class="pricing-badge">Most Popular</div>
                 <h3>Monthly Plan</h3>
                 <div class="pricing-price">
-                    <span class="price-symbol">$</span>
-                    <span class="price-amount">9</span>
+                    <span class="price-symbol">R$</span>
+                    <span class="price-amount">47</span>
                     <span class="price-month">/month</span>
                 </div>
-                <p class="pricing-desc">Full access. Cancel anytime.</p>
-                <p class="pricing-lifetime">First 10: lifetime price</p>
+                <p class="pricing-desc">Full access. Cancel whenever you want.</p>
+                <p class="pricing-lifetime">First 10 subscribers: lifetime price guaranteed</p>
                 
                 <ul class="pricing-features">
-                    <li>Full real-time dashboard</li>
-                    <li>10 prediction horizons</li>
-                    <li>Daily signals on Telegram VIP</li>
+                    <li>Complete real-time dashboard</li>
+                    <li>10 forecast horizons</li>
+                    <li>Daily signals in the VIP Telegram group</li>
                     <li>Integrated risk management</li>
                     <li>Verified trade history</li>
                     <li>Direct support via WhatsApp</li>
                 </ul>
 
+                <!-- Refund guarantee -->
+                <div class="guarantee-badge">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <div>
+                        <strong>7-day guarantee or your money back</strong>
+                        <p>Didn't like it? Request a full refund within 7 calendar days after payment, with no questions. Just send a message on WhatsApp.</p>
+                    </div>
+                </div>
+
+                
                 <div class="payment-section">
                     <h4>Start your free trial</h4>
                     
@@ -329,19 +571,27 @@
             <div class="faq-grid">
                 <div class="faq-card">
                     <h3>How is accuracy verified?</h3>
-                    <p>Each prediction is recorded with a timestamp. When the horizon passes, we compare it against the real Binance price. Data is publicly available in JSON.</p>
+                    <p>Each forecast is logged with a timestamp. When the horizon closes, we compare it with the real Binance price. The data stays public in JSON.</p>
                 </div>
                 <div class="faq-card">
                     <h3>How many signals do I receive per day?</h3>
-                    <p>1 to 2 daily signals in the Telegram VIP group, only when confidence is high. No spam.</p>
+                    <p>1 to 2 signals per day in the VIP Telegram group, only when confidence is high. No spam.</p>
                 </div>
                 <div class="faq-card">
                     <h3>Can I cancel at any time?</h3>
-                    <p>Yes. The plan is monthly and you can cancel whenever you want. No penalties, no hassle.</p>
+                    <p>Yes. The plan is monthly and you can cancel whenever you want. No penalty, no bureaucracy.</p>
                 </div>
                 <div class="faq-card">
                     <h3>Does this guarantee profit?</h3>
-                    <p>No. Trading involves risk. Our AI provides predictions with verified real accuracy, but past results do not guarantee future results.</p>
+                    <p>No. Trading involves risk. Our AI provides forecasts with verified real accuracy, but past results do not guarantee future results.</p>
+                </div>
+                <div class="faq-card">
+                    <h3>Is there a refund?</h3>
+                    <p>Yes. We guarantee a full refund within 7 calendar days after payment, with no need to justify it. Just contact us on WhatsApp.</p>
+                </div>
+                <div class="faq-card">
+                    <h3>What happens to my data?</h3>
+                    <p>We only use your name and WhatsApp number to activate access and provide support. We do not sell data to third parties. See our <a onclick="openModal('modal-privacy')" style="color:#06b6d4; cursor:pointer;">Privacy Policy</a>.</p>
                 </div>
             </div>
         </div>
@@ -356,6 +606,7 @@
                     <p>Proprietary AI for Crypto Trading</p>
                 </div>
                 <div class="footer-links">
+                    <a href="#how-it-works">How it works</a>
                     <a href="#results">Results</a>
                     <a href="#plans">Plans</a>
                     <a href="#faq">FAQ</a>
@@ -365,8 +616,36 @@
             <div class="footer-bottom">
                 <p>Past results do not guarantee future results. Cryptocurrency trading involves significant risks.</p>
                 <p class="footer-copy">Made in Bauru, Brazil &copy; 2026</p>
+                <p class="footer-legal">
+                    <a onclick="openModal('modal-terms')">Terms of Use</a>
+                    &nbsp;·&nbsp;
+                    <a onclick="openModal('modal-privacy')">Privacy Policy</a>
+                </p>
             </div>
         </div>
     </footer>
+
+<script>
+    function openModal(id) {
+        document.getElementById(id).classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeModal(id) {
+        document.getElementById(id).classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    // Close by clicking outside the box
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+        overlay.addEventListener('click', e => {
+            if (e.target === overlay) closeModal(overlay.id);
+        });
+    });
+    // Close with Esc
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.modal-overlay.active').forEach(m => closeModal(m.id));
+        }
+    });
+</script>
 </body>
 </html>
